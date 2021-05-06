@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ps-vol
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: "standard"
+  capacity:
+    storage: 10Gi
+  persistentVolumeReclaimPolicy: Retain # keep the persistent volume alive after removing PVC
+  gcePersistentDisk: # persistentDisk plugin on GCP (it must be created before create PV)
+    pdName: ps-vol  

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: two-containers
+spec:
+  containers:
+  - name: first-ctr
+    image: nginx:1.20.0
+    volumeMounts:
+    - name: shared-data
+      mountPath: /usr/share/nginx/html
+  - name: second
+    image: debian:stretch-slim
+    volumeMounts:
+    - name: shared-data
+      mountPath: /pod-data
+    command: ["/bin/sh"]
+    args:
+      - "-c"
+      - >
+        while true; do
+          date >> /pod-data/index.html;
+
+          echo Hello from the second container >> /pod-data/index.html;
+          sleep 1;
+        done
+  volumes:
+  - name: shared-data
+    emptyDir: {}

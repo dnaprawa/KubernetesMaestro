@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: elasticsearch
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: elasticsearch
+    spec:
+      containers:
+        - name: elasticsearch
+          image: elasticsearch:7.9.3
+          env:
+            - name: discovery.type
+              value: single-node
+            - name: network.host
+              value: 127.0.0.1
+            - name: http.port
+              value: "9201"
+        - name: nginx-proxy
+          image: nginx:1.19.5
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+            - name: certs
+              mountPath: /certs
+              readOnly: true
+          ports:
+            - name: https
+              containerPort: 9200
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: elasticsearch-nginx
+        - name: certs ## certs could be generated for example with https://cert-manager.io/ 
+          secret:
+            secretName: elasticsearch-tls
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elasticsearch-nginx
+data:
+  elasticsearch.conf: |
+    server {
+        listen 9200 ssl;
+        server_name elasticsearch;
+        ssl_certificate /certs/tls.crt;
+        ssl_certificate_key /certs/tls.key;
+
+        location / {
+            proxy_pass http://localhost:9201;
+        }
+    }

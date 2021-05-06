@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-htmlvol
+spec:
+  storageClassName: "my-gce-pd" ## IMPORTANT - this enables auto PV creating
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sc-pod
+  labels:
+    app: stg
+spec:
+  volumes:
+    - name: htmlvol
+      persistentVolumeClaim:
+        claimName: pvc-htmlvol
+  containers:
+    - name: main-ctr
+      image: nginx:1.20.0
+      ports:
+        - containerPort: 80
+          name: http-server
+      volumeMounts:
+        - mountPath: /var/www/html
+          name: htmlvol

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: html-conf
+data:
+  html.conf: |
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <title>Custom Nginx HTML page</title>
+      </head>
+      <body>
+        <p> This is content from Config Map (html.conf)
+      </body>
+    </html>
