@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-km
+  labels:
+    jobgroup: k8smaestro
+spec:
+  parallelism: 1 # only one replica of the job will be created
+  completions: 1 # how many job replicas need to be completed to mark job as completed
+  activeDeadlineSeconds: 1800 # maximum duration the job can run
+  template:
+    spec:
+      containers:
+      - name: job-ctr
+        image: k8smaestro/job-demo
+        args: ["15"]
+      restartPolicy: Never ## optionally - OnFailure (will restart the container in the pod), or Always (always restart container), but recommended option is Never. 
+  backoffLimit: 4 ## number of retries for a job

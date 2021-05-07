@@ -1,0 +1,23 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cronjob-km
+spec:
+  schedule: "*/1 * * * *" ## every 10 sec
+  # Allow, Forbid, Replace
+  concurrencyPolicy: "Replace" # if previous job has not finished, it will be canceled and a new one will start.
+  suspend: false            
+  successfulJobsHistoryLimit: 3 
+  failedJobsHistoryLimit: 1     
+  jobTemplate:             
+    spec:
+      template:
+        metadata:
+          labels:          
+            parent: "cronjobpi"
+        spec:
+          containers:
+          - name: cronjob-ctr
+            image: perl
+            command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+          restartPolicy: OnFailure 
