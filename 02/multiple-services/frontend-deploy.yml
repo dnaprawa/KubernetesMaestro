@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8sdemo-frontend
+  labels:
+    app: k8sdemo-frontend
+  namespace: k8sdemo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8sdemo-frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: k8sdemo-frontend
+    spec:
+      containers:
+      - image: k8smaestro/k8sdemo-frontend:latest
+        imagePullPolicy: Always
+        name: k8sdemo-frontend
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        env:
+        - name: CRYSTAL_URL
+          value: "http://k8sdemo-crystal.k8sdemo.svc.cluster.local/crystal"
+        - name: NODEJS_URL
+          value: "http://k8sdemo-nodejs.k8sdemo.svc.cluster.local/"

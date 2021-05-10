@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8sdemo-crystal
+  labels:
+    app: k8sdemo-crystal
+  namespace: k8sdemo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8sdemo-crystal
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: k8sdemo-crystal
+    spec:
+      containers:
+      - image: k8smaestro/k8sdemo-crystal:latest
+        imagePullPolicy: Always
+        name: k8sdemo-crystal
+        ports:
+        - containerPort: 3000
+          protocol: TCP
