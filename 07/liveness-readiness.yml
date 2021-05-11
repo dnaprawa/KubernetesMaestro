@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-api-liveness-readiness
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: web-api-liveness-readiness
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: web-api-liveness-readiness
+    spec:
+      containers:
+      - name: webapi
+        image: k8smaestro/web-api:1.0
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 80
+            httpHeaders:
+            - name: "Cookie"
+              value: "session-id=x-readiness-probe"
+        livenessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 80
+            httpHeaders:
+            - name: "Cookie"
+              value: "session-id=x-liveness-probe"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 220Mi
+          limits:
+            cpu: 200m
+            memory: 450Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-web-api-liveness-readiness
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: web-api-liveness-readiness

@@ -9,7 +9,7 @@ spec:
         claimName: ps-pvc
   containers:
     - name: main-ctr
-      image: nginx:1.20.0
+      image: k8smaestro/web-app:1.0
       ports:
         - containerPort: 80
           name: http-server
