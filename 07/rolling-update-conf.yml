@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ro-frontend-nginx-conf
+data:
+  nginx.conf: |
+    # The identifier Backend is internal to nginx, and used to name this specific upstream
+    upstream Backend {
+        server service-rollingupdate-backend;
+    }
+
+    server {
+      listen       8080;
+      listen  [::]:8080;
+      server_name  localhost;
+
+      location / {
+          root   /usr/share/nginx/html;
+          index  index.html index.htm;
+      }
+
+      location /api {
+        # The following statement will proxy traffic to the upstream named Backend
+        rewrite ^/api(.*) $1 break;
+        proxy_pass http://Backend;
+      }
+    }

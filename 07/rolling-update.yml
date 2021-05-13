@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rollingupdate-backend-deploy
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rollingupdate-backend
+  replicas: 7
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1 # how many pods we can add at a time
+      maxUnavailable: 1 # how many pods can be unavailable during the rolling update
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rollingupdate-backend
+    spec:
+      containers:
+      - name: backend
+        image: k8smaestro/projectapp-backend:2.0
+        ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rollingupdate-frontend-deploy
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rollingupdate-frontend
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1 # how many pods we can add at a time
+      maxUnavailable: 1 # how many pods can be unavailable during the rolling update
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rollingupdate-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: k8smaestro/projectapp-frontend:1.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: API_URL
+          value: "/api"
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d # mount nginx-conf volume to /etc/nginx/conf.d
+          readOnly: true
+          name: ro-frontend-nginx-conf
+      volumes:
+      - name: ro-frontend-nginx-conf
+        configMap:
+          name: ro-frontend-nginx-conf
+          items:
+            - key: nginx.conf
+              path: default.conf
