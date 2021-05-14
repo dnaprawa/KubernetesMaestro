@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: passage-v2-webapp-svc
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app.kubernetes.io/name: passage-v2-webapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: passage-v2-deploy
+spec:
+  replicas: 3
+  selector: 
+    matchLabels:
+      app.kubernetes.io/name: passage-v2-webapp
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: passage-v2-webapp
+    spec:
+      containers:
+      - name: webapp-ctr
+        image: k8smaestro/web-app:2.0
+        ports:
+        - containerPort: 80
