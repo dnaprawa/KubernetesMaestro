@@ -1,0 +1,47 @@
+--- # seperator jeśli definiujemy więcej niż jedą strukturę
+
+# struktura typu nazwa-wartość
+apiVersion: v1 # werjsa api
+
+
+# nazwa-wartość
+kind: Pod # rodzaj obiektu
+
+
+# bardziej rozbudowana struktura typu nazwa-wartość
+metadata:
+  name: hello-pod # spacje, zamiast tabów - zwykle dwie spacje
+  labels:
+    app: web
+    zone: prod
+    version: v1
+
+spec:
+  containers:
+    # lista, czyli inaczej sekwencja obiektów
+    # Przykład: 
+
+    # args:
+    # - sleep
+    # - "1000"
+    # - message
+    # - "Friday, please!"
+
+    # obiekt również może być strukturą typu nazwa-wartość
+    - name: front-end
+      image: dnaprawa/hello-kubernetes:1.0
+      ports:
+        # możemy robić zagnieżdżone listy
+        - containerPort: 80
+        # tutaj_mógłby_być_element_listy:
+        #   - a_tutaj_kolejne_zagnieżdzenie
+        #     kolejny_element:
+        #     kolejny_element:
+        #       - lista
+
+
+    - name: backend # nazwa kontenera
+      image: image.registry.com/backend # obraz
+      ports: 
+        - containerPort: 8080 # na jakim porcie usługa działa w kontenerze
+    
