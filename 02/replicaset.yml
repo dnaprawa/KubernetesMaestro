@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs-webapp
+  labels:
+    app: k8smaestro-webapp
+spec:
+  # modify replicas according to your case
+  replicas: 3
+  selector:
+    matchLabels:
+      app: k8smaestro-webapp
+  template:
+    metadata:
+      labels:
+        app: k8smaestro-webapp
+    spec:
+      containers:
+      - name: webapp
+        image: k8smaestro/web-app:1.0
+        ports:
+          - containerPort: 80
