@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: info-app-ingress
+  labels:
+    app.kubernetes.io/part-of: canary-demo
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: info.app.34.118.127.205.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: info-webapp-svc-v1
+            port: 
+              number: 80
