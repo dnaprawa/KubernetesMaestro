@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-api-debug
+  labels:
+    app.kubernetes.io/name: web-api
+    app.kubernetes.io/instance: k8smaestro-web-api
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/component: weather-app-project
+    app.kubernetes.io/part-of: backend
+    app.kubernetes.io/managed-by: yaml 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      deployment: web-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      name: pods-web-api
+      labels:
+        deployment: web-api
+    spec:
+      securityContext:
+        runAsUser: 10000
+        runAsNonRoot: true
+        runAsGroup: 10001
+        fsGroup: 20001
+      containers:
+      - name: webapi
+        image: k8smaestro/web-aqi:1.0
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/heallh"
+            port: 80
+            httpHeaders:
+            - name: "Cookie"
+              value: "session-id=x-readiness-probe"
+        livenessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 80
+            httpHeaders:
+            - name: "Cookie"
+              value: "session-id=x-liveness-probe"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 20Gi
+          limits:
+            cpu: 200m
+            memory: 450Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-web-api-debugging
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: ClusterIP
+  selector:
+    deployment: web-api
