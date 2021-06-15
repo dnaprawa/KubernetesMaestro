@@ -1,20 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx
+  name: nginx-enhanced
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: nginx
+      deployment: pods-nginx-enhanced
   template:
     metadata:
+      name: pod-nginx-enhanced
       labels:
-        app: nginx
+        deployment: pods-nginx-enhanced
     spec:
+      securityContext:
+        runAsUser: 10000
+        runAsNonRoot: true
+        runAsGroup: 10001
+        fsGroup: 10001 # changing ownership of a volume mounted to a pod
       containers:
-      - name: nginx
-        image: nginx:1.20.0
+      - name: nginx-enhanced-ctr
+        image : k8smaestro/nginx-unprivileged:1.20.0
         imagePullPolicy: Always
         ports:
         - name: http
