@@ -1,0 +1,31 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+  name: ns-must-have-gk
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Namespace"]
+  parameters:
+    labels: ["gatekeeper"]
+status:
+  auditTimestamp: "2019-05-11T01:46:13Z"
+  enforced: false
+  violations:
+  - enforcementAction: deny
+    kind: Namespace
+    message: 'you must provide labels: {"gatekeeper"}'
+    name: default
+  - enforcementAction: deny
+    kind: Namespace
+    message: 'you must provide labels: {"gatekeeper"}'
+    name: gatekeeper-system
+  - enforcementAction: deny
+    kind: Namespace
+    message: 'you must provide labels: {"gatekeeper"}'
+    name: kube-public
+  - enforcementAction: deny
+    kind: Namespace
+    message: 'you must provide labels: {"gatekeeper"}'
+    name: kube-system

@@ -1,0 +1,16 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: AuditK8sPSPPrivilegedContainer
+metadata:
+  name: auditk8spspprivilegedcontainer
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+status:
+  auditTimestamp: "2019-05-11T01:46:13Z"
+  enforced: true
+  violations:
+    - enforcementAction: allow
+      kind: Pod
+      message: 'Privileged container is not allowed'
