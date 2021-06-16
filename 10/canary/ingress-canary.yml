@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: info-app-canary
   labels:
-    app.kubernetes.io/part-of: canary-demo
+    part-of: canary-demo
   annotations:
     kubernetes.io/ingress.class: "nginx"
 

@@ -3,12 +3,12 @@ kind: Deployment
 metadata:
   name: web-api-debug
   labels:
-    app.kubernetes.io/name: web-api
-    app.kubernetes.io/instance: k8smaestro-web-api
-    app.kubernetes.io/version: "1.0"
-    app.kubernetes.io/component: weather-app-project
-    app.kubernetes.io/part-of: backend
-    app.kubernetes.io/managed-by: yaml 
+    name: web-api
+    instance: k8smaestro-web-api
+    version: "1.0"
+    component: weather-app-project
+    part-of: backend
+    managed-by: yaml 
 spec:
   replicas: 3
   selector:

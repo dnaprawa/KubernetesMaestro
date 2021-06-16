@@ -5,11 +5,11 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: projectapp-frontend
+      name: projectapp-frontend
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: projectapp-frontend
+        name: projectapp-frontend
     spec:
       containers:
       - name: frontend
@@ -42,4 +42,4 @@ spec:
       protocol: TCP
   type: LoadBalancer
   selector:
-    app.kubernetes.io/name: projectapp-frontend
+    name: projectapp-frontend

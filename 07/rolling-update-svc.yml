@@ -9,7 +9,7 @@ spec:
       protocol: TCP
   type: LoadBalancer
   selector:
-    app.kubernetes.io/name: rollingupdate-frontend
+    name: rollingupdate-frontend
 ---
 apiVersion: v1
 kind: Service
@@ -22,4 +22,4 @@ spec:
       protocol: TCP
   type: ClusterIP
   selector:
-    app.kubernetes.io/name: rollingupdate-backend
+    name: rollingupdate-backend

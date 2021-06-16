@@ -12,12 +12,12 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: app-2048
+      name: app-2048
   replicas: 5
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: app-2048
+        name: app-2048
     spec:
       containers:
       - image: k8smaestro/2048
@@ -38,4 +38,4 @@ spec:
       protocol: TCP
   type: ClusterIP
   selector:
-    app.kubernetes.io/name: app-2048
+    name: app-2048
