@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ns-b-svc
+  namespace: ns-b
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+  type: ClusterIP
+  selector:
+    deployment: pods-nginx-ns-b
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-ns-b
+  namespace: ns-b
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      deployment: pods-nginx-ns-b
+  template:
+    metadata:
+      name: pod-nginx
+      labels:
+        deployment: pods-nginx-ns-b
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/nginx-enhanced-ctr: localhost/docker-default
+    spec:
+      securityContext:
+        runAsUser: 10000
+        runAsNonRoot: true
+        runAsGroup: 10001
+        fsGroup: 20001
+      automountServiceAccountToken: false
+      containers:
+      - name: nginx-enhanced-ctr
+        image : k8smaestro/nginx-unprivileged:1.20.0
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - all
+          seccompProfile:
+            type: RuntimeDefault
+          procMount: "Default"
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "50m"
+          limits:
+            memory: "200Mi"
+            cpu: "300m"
+        readinessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /index.html
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 3
+        livenessProbe:
+          httpGet:
+            path: /index.html
+            port: http
+          failureThreshold: 1
+          periodSeconds: 10
