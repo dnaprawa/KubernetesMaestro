@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "projectapp.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "projectapp.common.labels" . | nindent 4 }}
     {{- include "projectapp.frontend.selectorLabels" . | nindent 4 }}
@@ -51,11 +52,11 @@ spec:
           volumeMounts:
           - mountPath: /etc/nginx/conf.d # mount nginx-conf volume to /etc/nginx/conf.d
             readOnly: true
-            name: projectapp-frontend-nginx-conf
+            name: {{ include "projectapp.configName" . }}
       volumes:
-      - name: projectapp-frontend-nginx-conf
+      - name: {{ include "projectapp.configName" . }}
         configMap:
-          name: projectapp-frontend-nginx-conf # place ConfigMap `nginx-conf` on /etc/nginx/conf.d/default.conf file
+          name: {{ include "projectapp.configName" . }} # place ConfigMap `nginx-conf` on /etc/nginx/conf.d/default.conf file
           items:
             - key: nginx.conf
               path: default.conf

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   namespace: {{ .Release.Namespace | quote }}
-  name: projectapp-frontend-nginx-conf
+  name: {{ include "projectapp.configName" . }}
 data:
   nginx.conf: |
     # The identifier Backend is internal to nginx, and used to name this specific upstream

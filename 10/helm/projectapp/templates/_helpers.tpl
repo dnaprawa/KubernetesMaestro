@@ -77,13 +77,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 
+
 {{/*
-Create the name of the service account to use
+Create config name
 */}}
-{{- define "projectapp.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "projectapp.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
+{{- define "projectapp.configName" -}}
+{{ include "projectapp.name" . }}-{{ "config" }}-{{ .Release.Name }}
 {{- end }}
