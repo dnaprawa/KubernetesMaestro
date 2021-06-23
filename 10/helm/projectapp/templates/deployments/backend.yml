@@ -36,13 +36,18 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
+          readinessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: http
+            failureThreshold: 1
+            periodSeconds: 10
           resources:
             {{- toYaml .Values.backend.resources | nindent 12 }}

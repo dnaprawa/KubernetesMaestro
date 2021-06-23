@@ -1,0 +1,59 @@
+backend-build:
+  stage: build
+  image: docker:latest
+  services:
+    - name: docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker image build --tag $CI_REGISTRY_IMAGE/projectapp-backend:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE/projectapp-backend:latest ./backend
+    - docker image push $CI_REGISTRY_IMAGE/projectapp-backend:$CI_COMMIT_SHORT_SHA
+    - docker image push $CI_REGISTRY_IMAGE/projectapp-backend:latest
+    
+frontend-build:
+  stage: build
+  image: docker:latest
+  services:
+    - name: docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker image build --tag $CI_REGISTRY_IMAGE/projectapp-frontend:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE/projectapp-frontend:latest ./frontend
+    - docker image push $CI_REGISTRY_IMAGE/projectapp-frontend:$CI_COMMIT_SHORT_SHA
+    - docker image push $CI_REGISTRY_IMAGE/projectapp-frontend:latest
+
+trivy:
+  stage: test
+  image: docker:19.03.8
+  services:
+    - name: docker:dind 
+  variables:
+    FRONTEND_IMAGE: $CI_REGISTRY_IMAGE/projectapp-frontend:latest
+    BACKEND_IMAGE: $CI_REGISTRY_IMAGE/projectapp-backend:latest
+  before_script:
+    - apk add --no-cache curl
+    - export VERSION=$(curl --silent "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+    - echo $VERSION
+    - wget https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz
+    - tar zxvf trivy_${VERSION}_Linux-64bit.tar.gz
+    - export TRIVY_USERNAME=$CI_REGISTRY_USER
+    - export TRIVY_PASSWORD=$CI_REGISTRY_PASSWORD
+  allow_failure: true
+  script:
+    # Build report
+    - ./trivy --exit-code 0 --cache-dir .trivycache/ --no-progress --format template --template "@contrib/gitlab.tpl" -o gl-container-scanning-report.json $FRONTEND_IMAGE
+    - ./trivy --exit-code 0 --cache-dir .trivycache/ --no-progress --format template --template "@contrib/gitlab.tpl" -o gl-container-scanning-report.json $BACKEND_IMAGE
+    # Print report
+    - ./trivy --exit-code 0 --cache-dir .trivycache/ --no-progress --severity HIGH $FRONTEND_IMAGE
+    - ./trivy --exit-code 0 --cache-dir .trivycache/ --no-progress --severity HIGH $BACKEND_IMAGE
+    # it should fail on high and critical vulnerabilities: --exit-code 1
+    - ./trivy --exit-code 0 --cache-dir .trivycache/ --severity CRITICAL --no-progress $FRONTEND_IMAGE
+    - ./trivy --exit-code 0 --cache-dir .trivycache/ --severity CRITICAL --no-progress $BACKEND_IMAGE
+  cache:
+    paths:
+      - .trivycache/
+  # Enables https://docs.gitlab.com/ee/user/application_security/container_scanning/ (Container Scanning report is available on GitLab EE Ultimate or GitLab.com Gold)
+  artifacts:
+    reports:
+      container_scanning: gl-container-scanning-report.json
+
