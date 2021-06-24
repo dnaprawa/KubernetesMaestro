@@ -96,8 +96,8 @@ deploy-master:
     - kubectl config set-context default --cluster=k8s --user=gitlab
     - kubectl config use-context default
     - >
-      helm upgrade projectapp ./helm --install 
+      helm upgrade -f ./helm/values-with-ingress.yaml projectapp ./helm --install 
       --set image.repository=${CI_REGISTRY_IMAGE}/projectapp-frontend 
       --set backend.image.repository=${CI_REGISTRY_IMAGE}/projectapp-backend
       --set image.tag=${CI_COMMIT_SHORT_SHA} --set backend.image.tag=${CI_COMMIT_SHORT_SHA}
-    
+      --set ingress.hosts[0].host=projectapp.${INGRESS_IP}.nip.io
