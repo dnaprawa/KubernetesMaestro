@@ -85,7 +85,7 @@ backend-scan-image:
     reports:
       container_scanning: gl-container-scanning-report.json
 
-deploy-master:
+deploy-dev:
   stage: deploy
   only:
     - master

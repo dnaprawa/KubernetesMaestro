@@ -85,7 +85,7 @@ backend-scan-image:
     reports:
       container_scanning: gl-container-scanning-report.json
 
-deploy-master:
+deploy-dev:
   stage: deploy
   only:
     - master
@@ -100,4 +100,25 @@ deploy-master:
       --set image.repository=${CI_REGISTRY_IMAGE}/projectapp-frontend 
       --set backend.image.repository=${CI_REGISTRY_IMAGE}/projectapp-backend
       --set image.tag=${CI_COMMIT_SHORT_SHA} --set backend.image.tag=${CI_COMMIT_SHORT_SHA}
+      --set ingress.hosts[0].host=dev.projectapp.${INGRESS_IP}.nip.io
+
+
+deploy-prod:
+  stage: deploy
+  only:
+    - master
+  when: manual
+  image: dtzar/helm-kubectl
+  script:
+    - kubectl config set-cluster k8s --server="${SERVER}" --certificate-authority=$CERTIFICATE_AUTHORITY_DATA --embed-certs=true
+    - kubectl config set-credentials gitlab --token="${TOKEN}"
+    - kubectl config set-context default --cluster=k8s --user=gitlab
+    - kubectl config use-context default
+    - >
+      helm upgrade -f ./helm/values-with-ingress.yaml projectapp-prod ./helm --install
+      --create-namespace --namespace prod
+      --set image.repository=${CI_REGISTRY_IMAGE}/projectapp-frontend
+      --set backend.image.repository=${CI_REGISTRY_IMAGE}/projectapp-backend
+      --set image.tag=${CI_COMMIT_SHORT_SHA} --set backend.image.tag=${CI_COMMIT_SHORT_SHA}
       --set ingress.hosts[0].host=projectapp.${INGRESS_IP}.nip.io
+      
