@@ -1,7 +1,7 @@
 --- # seperator jeśli definiujemy więcej niż jedą strukturę
 
 # struktura typu nazwa-wartość
-apiVersion: v1 # werjsa api
+apiVersion: v1 # wersja api
 
 
 # nazwa-wartość
@@ -44,4 +44,12 @@ spec:
       image: image.registry.com/backend # obraz
       ports: 
         - containerPort: 8080 # na jakim porcie usługa działa w kontenerze
-    
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-pod-2 # spacje, zamiast tabów - zwykle dwie spacje
+  labels:
+    app: web-1
+    zone: prod-1
+    version: v1-1

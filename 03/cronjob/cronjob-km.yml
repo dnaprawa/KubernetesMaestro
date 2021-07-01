@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: cronjob-km
 spec:
-  schedule: "*/1 * * * *" ## every 1 sec
+  schedule: "*/1 * * * *" ## every 1 minute
   # Allow, Forbid, Replace
   concurrencyPolicy: "Replace" # if previous job has not finished, it will be canceled and a new one will start.
   suspend: false            
