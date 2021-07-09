@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nonprivileged-pod
+  labels:
+    app: good-pod
+spec:
+  containers:
+  - name: webapp-ctr
+    image: k8smaestro/web-app:1.0
+    securityContext:
+      privileged: false

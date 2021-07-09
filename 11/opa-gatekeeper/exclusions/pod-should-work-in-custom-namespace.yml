@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: custom-namespace
+  name: privileged-pod
+  labels:
+    run: webapp
+spec:
+  containers:
+  - name: webapp
+    image: k8smaestro/web-app:1.0
+    ports:
+      - containerPort: 80
+    securityContext:
+      privileged: true
