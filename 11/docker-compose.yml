@@ -1,0 +1,26 @@
+version: "3.7"
+
+services:
+  frontend:
+    image: k8smaestro/projectapp-frontend:2.0
+    container_name: projectapp-frontend
+    environment: 
+      API_URL: http://localhost:8080
+    ports:
+      - "3000:8080"
+    depends_on: 
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    image: k8smaestro/projectapp-backend:2.0
+    container_name: projectapp-backend
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

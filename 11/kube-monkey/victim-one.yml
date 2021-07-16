@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-2048
+  labels:
+    kube-monkey/enabled: enabled
+    kube-monkey/identifier: deployment-2048
+    kube-monkey/mtbf: '1'
+    kube-monkey/kill-mode: "fixed"
+    kube-monkey/kill-value: '2'
+spec:
+  selector:
+    matchLabels:
+      name: app-2048
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        name: app-2048
+        kube-monkey/enabled: enabled
+        kube-monkey/identifier: deployment-2048
+        kube-monkey/mtbf: '1'
+        kube-monkey/kill-mode: "fixed"
+        kube-monkey/kill-value: '2'
+    spec:
+      containers:
+      - image: k8smaestro/2048
+        imagePullPolicy: Always
+        name: app-2048
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-2048
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: ClusterIP
+  selector:
+    name: app-2048

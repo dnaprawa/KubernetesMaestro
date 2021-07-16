@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-monkey
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-monkey
+  template:
+    metadata:
+      labels:
+        app: kube-monkey
+    spec:
+      serviceAccountName: kube-monkey
+      containers:
+      - name: kube-monkey
+        command:
+          - "/kube-monkey"
+        args: ["-v=5", "-log_dir=/var/log/kube-monkey"]
+        image: ayushsobti/kube-monkey:v0.3.0
+        env:
+          - name: KUBE_MONKEY_ID
+            value: CLUSTER_A
+        volumeMounts:
+          - name: config-volume
+            mountPath: "/etc/kube-monkey"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: kube-monkey-config-map
