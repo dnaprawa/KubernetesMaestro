@@ -7,9 +7,8 @@ data:
   config.toml: |
     [kubemonkey]
     dry_run = false
-    run_hour = 11
-    start_hour = 12
-    end_hour = 13
+    run_hour = 9
+    start_hour = 10
+    end_hour = 23
     blacklisted_namespaces = ["kube-system"]
     time_zone = "Europe/Budapest"
-    

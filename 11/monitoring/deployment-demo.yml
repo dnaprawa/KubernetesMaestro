@@ -1,0 +1,139 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: k8sdemo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8sdemo-crystal
+  labels:
+    app: k8sdemo-crystal
+  namespace: k8sdemo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: k8sdemo-crystal
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: k8sdemo-crystal
+    spec:
+      containers:
+      - image: k8smaestro/k8sdemo-crystal:latest
+        imagePullPolicy: Always
+        name: k8sdemo-crystal
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8sdemo-crystal
+  namespace: k8sdemo
+spec:
+  selector:
+    app: k8sdemo-crystal
+  ports:
+   -  protocol: TCP
+      port: 80
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8sdemo-frontend
+  labels:
+    app: k8sdemo-frontend
+  namespace: k8sdemo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: k8sdemo-frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: k8sdemo-frontend
+    spec:
+      containers:
+      - image: k8smaestro/k8sdemo-frontend:latest
+        imagePullPolicy: Always
+        name: k8sdemo-frontend
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        env:
+        - name: CRYSTAL_URL
+          value: "http://k8sdemo-crystal.k8sdemo.svc.cluster.local/crystal"
+        - name: NODEJS_URL
+          value: "http://k8sdemo-nodejs.k8sdemo.svc.cluster.local/"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8sdemo-frontend
+  namespace: k8sdemo
+spec:
+  selector:
+    app: k8sdemo-frontend
+  type: ClusterIP
+  ports:
+   -  protocol: TCP
+      port: 80
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8sdemo-nodejs
+  labels:
+    app: k8sdemo-nodejs
+  namespace: k8sdemo
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: k8sdemo-nodejs
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: k8sdemo-nodejs
+    spec:
+      containers:
+      - image: k8smaestro/k8sdemo-nodejs:latest
+        imagePullPolicy: Always
+        name: k8sdemo-nodejs
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8sdemo-nodejs
+  namespace: k8sdemo
+spec:
+  selector:
+    app: k8sdemo-nodejs
+  ports:
+   -  protocol: TCP
+      port: 80
+      targetPort: 3000
