@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: webapp-ctr
-        image: k8smaestro/web-api:2.0 ## zrobić taki obraz w wersji 2.0
+        image: k8smaestro/web-api:2.0
         ports:
         - containerPort: 80
         livenessProbe:
