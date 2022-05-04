@@ -40,11 +40,11 @@ frontend-scan-image:
   allow_failure: true
   script:
     # Build report
-    - ./trivy --exit-code 0 --cache-dir .trivycache/ --no-progress --format template --template "@contrib/gitlab.tpl" -o gl-container-scanning-report.json $FRONTEND_IMAGE
+    - ./trivy image --exit-code 0 --cache-dir .trivycache/ --no-progress --format template --template "@contrib/gitlab.tpl" -o gl-container-scanning-report.json $FRONTEND_IMAGE
     # Print report
-    - ./trivy --exit-code 0 --cache-dir .trivycache/ --no-progress --severity HIGH $FRONTEND_IMAGE
+    - ./trivy image --exit-code 0 --cache-dir .trivycache/ --no-progress --severity HIGH $FRONTEND_IMAGE
     # it should fail on high and critical vulnerabilities: --exit-code 1
-    - ./trivy --exit-code 1 --cache-dir .trivycache/ --severity CRITICAL --no-progress $FRONTEND_IMAGE
+    - ./trivy image --exit-code 1 --cache-dir .trivycache/ --severity CRITICAL --no-progress $FRONTEND_IMAGE
   cache:
     paths:
       - .trivycache/
@@ -72,11 +72,11 @@ backend-scan-image:
   allow_failure: true
   script:
     # Build report
-    - ./trivy --exit-code 0 --cache-dir .trivycache/ --no-progress --format template --template "@contrib/gitlab.tpl" -o gl-container-scanning-report.json $BACKEND_IMAGE
+    - ./trivy image --exit-code 0 --cache-dir .trivycache/ --no-progress --format template --template "@contrib/gitlab.tpl" -o gl-container-scanning-report.json $BACKEND_IMAGE
     # Print report
-    - ./trivy --exit-code 0 --cache-dir .trivycache/ --no-progress --severity HIGH $BACKEND_IMAGE
+    - ./trivy image --exit-code 0 --cache-dir .trivycache/ --no-progress --severity HIGH $BACKEND_IMAGE
     # it should fail on high and critical vulnerabilities: --exit-code 1
-    - ./trivy --exit-code 1 --cache-dir .trivycache/ --severity CRITICAL --no-progress $BACKEND_IMAGE
+    - ./trivy image --exit-code 1 --cache-dir .trivycache/ --severity CRITICAL --no-progress $BACKEND_IMAGE
   cache:
     paths:
       - .trivycache/
