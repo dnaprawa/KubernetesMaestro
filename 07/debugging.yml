@@ -25,11 +25,6 @@ spec:
       labels:
         deployment: web-api
     spec:
-      securityContext:
-        runAsUser: 10000
-        runAsNonRoot: true
-        runAsGroup: 10001
-        fsGroup: 20001
       containers:
       - name: webapi
         image: k8smaestro/web-aqi:1.0
