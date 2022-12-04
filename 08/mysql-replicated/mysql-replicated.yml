@@ -79,7 +79,7 @@ spec:
         resources:
           requests:
             cpu: 300m
-            memory: 600m
+            memory: 600Mi
         livenessProbe:
           exec:
             command: ["mysqladmin", "ping"]
