@@ -12,7 +12,7 @@ spec:
   hard: 
     pods: "10" # maximum number of pods
     requests.cpu: "0.5"
-    requests.memory: 1Gi # request: Sum of CPU
+    requests.memory: 1Gi # request: Sum of memory
     limits.cpu: "1"
     limits.memory: 2Gi # limit: Sum of memory
 ---
