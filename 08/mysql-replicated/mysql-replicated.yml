@@ -22,7 +22,7 @@ spec:
         - |
           set -ex
           # Generate mysql server-id from pod ordinal index.
-          [[ `hostname` =~ -([0-9]+)$ ]] || exit 1
+          [[ $HOSTNAME =~ -([0-9]+)$ ]] || exit 1
           ordinal=${BASH_REMATCH[1]}
           echo [mysqld] > /mnt/conf.d/server-id.cnf
           # Add an offset to avoid reserved server-id=0 value.
@@ -78,8 +78,8 @@ spec:
           mountPath: /etc/mysql/conf.d
         resources:
           requests:
-            cpu: 300m
-            memory: 600Mi
+            cpu: 500m
+            memory: 1Gi
         livenessProbe:
           exec:
             command: ["mysqladmin", "ping"]
