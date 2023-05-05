@@ -5,10 +5,12 @@ metadata:
   labels:
     part-of: blue-green-demo
   annotations:
-    kubernetes.io/ingress.class: "nginx"
+    # deprecated
+    # kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
+  ingressClassName: nginx
   rules:
   - http:
       paths:
