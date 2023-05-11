@@ -1,16 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
+  name: postgresql
+  namespace: odoo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: postgresql
   template:
     metadata:
       labels:
-        app: postgres
+        app: postgresql
     spec:
       containers:
         - name: postgres
@@ -18,17 +19,15 @@ spec:
           ports:
             - containerPort: 5432
           env:
-            - name: POSTGRES_DB
+            - name: POSTGRESQL_DATABASE
               value: k8smaestro
-            - name: POSTGRES_PASSWORD
+            - name: POSTGRESQL_PASSWORD
               value: k8smaestro
-            - name: POSTGRES_USER
-              value: postgres
-            - name: PGDATA
-              value: /var/lib/postgresql/data/pgdata
+            - name: POSTGRESQL_USERNAME
+              value: odoo
           volumeMounts:
             - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
+              mountPath: /bitnami/postgresql
       volumes:
         - name: postgres-storage
           emptyDir: {}
