@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo-deployment
+  namespace: odoo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odoo
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      containers:
+      - name: odoo
+        image: docker.io/bitnami/odoo:16
+        ports:
+        - containerPort: 8069
+        env:
+        - name: ODOO_DATABASE_NAME
+          value: "k8smaestro"
+        - name: ODOO_DATABASE_USER
+          value: "odoo"
+        - name: ODOO_DATABASE_PASSWORD
+          value: "k8smaestro"
+        - name: ODOO_DATABASE_PORT_NUMBER
+          value: "5432"
+        - name: ODOO_DATABASE_HOST
+          value: "postgresql.odoo.svc.cluster.local"
