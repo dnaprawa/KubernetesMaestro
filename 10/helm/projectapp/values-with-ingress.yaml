@@ -57,7 +57,7 @@ ingress:
     - host: ingress-ip.nip.io
       paths:
       - path: /
-        pathType: Prefix
+        pathType: ImplementationSpecific
         backend:
           service:
             name: 

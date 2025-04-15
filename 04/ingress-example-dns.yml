@@ -7,7 +7,7 @@ spec:
   - host: foo.bar.com
     http:
       paths:
-      - pathType: Prefix
+      - pathType: ImplementationSpecific
         path: "/"
         backend:
           service:
@@ -17,7 +17,7 @@ spec:
   - host: bar.foo.com
     http:
       paths:
-      - pathType: Prefix
+      - pathType: ImplementationSpecific
         path: "/"
         backend:
           service:
